@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luxury Watch Store</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Custom CSS */
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            padding-top: 56px;
+            background-color: #111;
+            color: #eee;
+        }
+        
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('intro1.webp') no-repeat center center;
+            background-size: cover;
+            color: white;
+            padding: 6rem 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 3px solid #d10000;
+        }
+        
+        .hero h1 {
+            font-size: calc(1.5rem + 2vw);
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            font-size: calc(1rem + 0.5vw);
+            margin-bottom: 2rem;
+        }
+        
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 1.5rem;
+            height: 100%;
+            border: none;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            background-color: #222;
+            color: #fff;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(209, 0, 0, 0.2); 
+        }
+        
+        .card-img-container {
+            height: 200px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: white; 
+            overflow: hidden;
+            padding: 10px;
+        }
+        
+        .card-img-fit {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #d10000 !important;
+        }
+        
+        .btn-primary {
+            background-color: #d10000;
+            border: none;
+            padding: 0.5rem 1.5rem;
+        }
+        
+        .btn-primary:hover {
+            background-color: #b00000;
+        }
+        
+        .cart-count {
+            background-color: #d10000;
+            color: white;
+            border-radius: 50%;
+            padding: 1px 6px;
+            font-size: 0.7rem;
+            position: relative;
+            top: -8px;
+            left: -5px;
+        }
+        
+        .price {
+            font-weight: 700;
+            color: #d10000;
+            font-size: 1rem;
+        }
+        
+        /* Product Card Styles */
+        .card-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #d10000;
+            margin-bottom: 0.5rem;
+        }
+        
+        .card-text {
+    font-size: 0.85rem;
+    color: #bbb;
+    min-height: 40px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    display: -moz-box;
+    -moz-box-orient: vertical;
+    -moz-line-clamp: 2;
+    display: box;
+    line-clamp: 2;
+    box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 1rem;
+}
+        
+        /* Modal Styles */
+        .modal-content {
+            background-color: #111;
+            border: 1px solid #d10000;
+            color: #eee;
+        }
+        
+        .modal-header {
+            border-bottom: 1px solid #d10000;
+            background-color: #000;
+        }
+        
+        .modal-title {
+            color: #d10000;
+        }
+        
+        .btn-close {
+            filter: invert(1);
+        }
+        
+        .modal-body {
+            color: #eee;
+        }
+
+        .modal-img {
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-img.fade-out {
+            opacity: 0;
+        }
+        
+        .modal-img-container {
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            background-color: #000;
+            border: 1px solid #333;
+        }
+        
+        .modal-img {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+        }
+        
+        .product-features {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .product-features li {
+            margin-bottom: 8px;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        
+        .product-features li:before {
+            content: "✓";
+            color: #d10000;
+            position: absolute;
+            left: 0;
+        }
+        
+        .add-to-cart-modal {
+            background-color: #d10000;
+            border: none;
+        }
+        
+        .add-to-cart-modal:hover {
+            background-color: #b00000;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 4rem 1rem;
+            }
+            
+            .card-img-container {
+                height: 150px;
+            }
+            
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+            
+            .modal-img-container {
+                height: 200px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .hero {
+                padding: 3rem 1rem;
+            }
+            
+            .card {
+                max-width: 300px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-clock me-2"></i>Luxury Watches
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Shop</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link cart-btn" href="cart.html">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cart-count">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <div class="container text-center">
+            <h1>Timeless Elegance, Modern Precision</h1>
+            <p>Discover our curated collection of luxury timepieces from the world's finest watchmakers</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="#our-collection" class="btn btn-primary btn-lg">Shop Now</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-5 mb-5" id="our-collection">
+        <h2 class="text-center mb-5">Our Collection</h2>
+        <div class="row g-4">
+
+            <!-- Watch 1 -->
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="card h-100" data-bs-toggle="modal" data-bs-target="#productModal" data-product-id="watch1">
+                    <div class="card-img-container">
+                        <img src="bl.webp" class="card-img-fit" alt="Casio MDV-107D-1A1">
+                    </div>
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Casio</h5>
+                        <p class="card-text">Casio MDV-107D-1A1 Rolex SUBMARINER Date Budget-Friendly Alternative</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="price">₱5,550</span>
+                            <button class="btn btn-outline-secondary btn-sm">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Watch 2 -->
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="card h-100" data-bs-toggle="modal" data-bs-target="#productModal" data-product-id="watch2">
+                    <div class="card-img-container">
+                        <img src="rolex2.webp" class="card-img-fit" alt="Casio MDV-107D-3A">
+                    </div>
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Casio</h5>
+                        <p class="card-text">Casio MDV-107D-3A Rolex STARBUCKS 44m Budget-Friendly Alternative</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="price">₱5,850</span>
+                            <button class="btn btn-outline-secondary btn-sm">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Watch 3 -->
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="card h-100" data-bs-toggle="modal" data-bs-target="#productModal" data-product-id="watch3">
+                    <div class="card-img-container">
+                        <img src="rolex13.webp" class="card-img-fit" alt="Seiko Presage SSA464J1">
+                    </div>
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Seiko</h5>
+                        <p class="card-text">Seiko Presage SSA464J1 Japanese Zen Garden Open Heart Automatic Watch</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="price">₱28,500</span>
+                            <button class="btn btn-outline-secondary btn-sm">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Watch 4 -->
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="card h-100" data-bs-toggle="modal" data-bs-target="#productModal" data-product-id="watch4">
+                    <div class="card-img-container">
+                        <img src="rolex4.jpg" class="card-img-fit" alt="Seiko SNKL38K1">
+                    </div>
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Seiko</h5>
+                        <p class="card-text">SEIKO SNKL38K1 Automatic Gold Stainless Steel Watch for Men</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="price">₱12,750</span>
+                            <button class="btn btn-outline-secondary btn-sm">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Watch 5 -->
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="card h-100" data-bs-toggle="modal" data-bs-target="#productModal" data-product-id="watch5">
+                    <div class="card-img-container">
+                        <img src="rolex5.webp" class="card-img-fit" alt="Valentino 20121662">
+                    </div>
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Valentino</h5>
+                        <p class="card-text">Valentino 20121662-ROSE GOLD - MOP DIAL EXCALIBUR IP ROSE GOLD STAINLESS STEEL BAND STRAP Watch for Women</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="price">₱25,900</span>
+                            <button class="btn btn-outline-secondary btn-sm">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Watch 6 -->
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="card h-100" data-bs-toggle="modal" data-bs-target="#productModal" data-product-id="watch6">
+                    <div class="card-img-container">
+                        <img src="rolex6.webp" class="card-img-fit" alt="Valentino 20122227">
+                    </div>
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Valentino</h5>
+                        <p class="card-text">Valentino 20122227-WHITE DIAL Stainless Steel Watch for Woman</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="price">₱22,500</span>
+                            <button class="btn btn-outline-secondary btn-sm">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Watch 7 -->
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="card h-100" data-bs-toggle="modal" data-bs-target="#productModal" data-product-id="watch7">
+                    <div class="card-img-container">
+                        <img src="rolex7.webp" class="card-img-fit" alt="Casio G-shock GA-2100-1A">
+                    </div>
+                    <div class="card-body text-center">
+                        <h5 class="card-title">G-shock</h5>
+                        <p class="card-text">Casio G-shock GA-2100-1A Digital Analog Rubber Strap Watch For Men</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="price">₱9,950</span>
+                            <button class="btn btn-outline-secondary btn-sm">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Watch 8 -->
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="card h-100" data-bs-toggle="modal" data-bs-target="#productModal" data-product-id="watch8">
+                    <div class="card-img-container">
+                        <img src="rolex8.webp" class="card-img-fit" alt="Casio G-shock GM-110BB-1A">
+                    </div>
+                    <div class="card-body text-center">
+                        <h5 class="card-title">G-shock</h5>
+                        <p class="card-text">Casio G-shock GM-110BB-1A Digital Analog Rubber Strap Watch</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="price">₱14,500</span>
+                            <button class="btn btn-outline-secondary btn-sm">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Watch 9 -->
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="card h-100" data-bs-toggle="modal" data-bs-target="#productModal" data-product-id="watch9">
+                    <div class="card-img-container">
+                        <img src="rolex9.webp" class="card-img-fit" alt="Casio LTP-V009D-4E">
+                    </div>
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Casio</h5>
+                        <p class="card-text">Casio LTP-V009D-4E Analog Stainless Steel Strap Watch For Women</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="price">₱3,950</span>
+                            <button class="btn btn-outline-secondary btn-sm">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Watch 10 -->
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="card h-100" data-bs-toggle="modal" data-bs-target="#productModal" data-product-id="watch10">
+                    <div class="card-img-container">
+                        <img src="rolex14.webp" class="card-img-fit" alt="Casio Edifice EFR-526L-1A">
+                    </div>
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Edifice</h5>
+                        <p class="card-text">Casio Edifice EFR-526L-1A Chronograph Leather Strap Watch For Men</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="price">₱8,250</span>
+                            <button class="btn btn-outline-secondary btn-sm">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Watch 11 -->
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="card h-100" data-bs-toggle="modal" data-bs-target="#productModal" data-product-id="watch11">
+                    <div class="card-img-container">
+                        <img src="rolex11.webp" class="card-img-fit" alt="Seiko 5 SSK003K1">
+                    </div>
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Seiko</h5>
+                        <p class="card-text">Seiko 5 SSK003K1 Sports Batman GMT Automatic Watch for Men</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="price">₱18,500</span>
+                            <button class="btn btn-outline-secondary btn-sm">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Watch 12 -->
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="card h-100" data-bs-toggle="modal" data-bs-target="#productModal" data-product-id="watch12">
+                    <div class="card-img-container">
+                        <img src="rolex12.webp" class="card-img-fit" alt="Valentino 20122227">
+                    </div>
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Valentino</h5>
+                        <p class="card-text">Valentino 20122227-MOP DIAL Stainless Steel Band Watch for Women</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="price">₱24,750</span>
+                            <button class="btn btn-outline-secondary btn-sm">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Detail Modal -->
+    <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productModalLabel">Product Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="modal-img-container">
+                                <img id="modalProductImage" src="" class="modal-img" alt="">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h2 id="modalProductName"></h2>
+                            <h4 id="modalProductPrice" class="text-primary mb-4"></h4>
+                            <p id="modalProductDescription" class="mb-4"></p>
+                            
+                            <h5>Features</h5>
+                            <ul class="product-features" id="modalProductFeatures">
+                                <!-- Features will be added dynamically -->
+                            </ul>
+                            
+                            <button class="btn btn-primary mt-4 w-100 add-to-cart-modal">
+                                <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5>Luxury Watches</h5>
+                    <p>Providing premium timepieces since 1995. Our curated collection represents the finest in horology.</p>
+                </div>
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white">Home</a></li>
+                        <li><a href="#" class="text-white">Shop</a></li>
+                        <li><a href="#" class="text-white">About Us</a></li>
+                        <li><a href="#" class="text-white">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Newsletter</h5>
+                    <form>
+                        <div class="mb-3">
+                            <input type="email" class="form-control" placeholder="Your email">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="text-center">
+                <p class="mb-0">&copy; 2023 Luxury Watches. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Product database with detailed information
+        const products = {
+            watch1: {
+                name: "Casio MDV-107D-1A1",
+                price: "₱5,550",
+                image: "bl.webp",
+                description: "The Casio MDV-107D-1A1 is a budget-friendly alternative to luxury dive watches, offering robust functionality with a classic design. Its stainless steel construction and 200m water resistance make it perfect for aquatic adventures.",
+                features: [
+                    "44mm stainless steel case",
+                    "Mineral crystal glass",
+                    "Quartz movement for accuracy",
+                    "Unidirectional rotating bezel",
+                    "Luminous hands and markers",
+                    "200m water resistance"
+                ]
+            },
+            watch2: {
+                name: "Casio MDV-107D-3A",
+                price: "₱5,850",
+                image: "rolex2.webp",
+                description: "This Starbucks-colored variant of the popular MDV-107 offers the same reliable performance with a distinctive green and black color scheme that stands out from the crowd.",
+                features: [
+                    "44mm stainless steel case",
+                    "Starbucks green/black bezel",
+                    "Quartz movement",
+                    "Date display at 3 o'clock",
+                    "Screw-down crown",
+                    "200m water resistance"
+                ]
+            },
+            watch3: {
+                name: "Seiko Presage",
+                price: "₱28,500",
+                image: "rolex13.webp",
+                description: "The Seiko Presage Open Heart showcases Japanese craftsmanship with its intricate open-heart design that reveals the balance wheel in motion, inspired by traditional Zen gardens.",
+                features: [
+                    "40.5mm stainless steel case",
+                    "Hardlex crystal",
+                    "4R38 automatic movement",
+                    "Open-heart dial design",
+                    "50-hour power reserve",
+                    "50m water resistance"
+                ]
+            },
+            watch4: {
+                name: "Seiko",
+                price: "₱12,750",
+                image: "rolex4.jpg",
+                description: "This elegant automatic watch from Seiko's Essentials collection features a gold-tone stainless steel case and bracelet, perfect for formal occasions or everyday wear.",
+                features: [
+                    "38mm gold-tone stainless steel case",
+                    "Hardlex crystal",
+                    "7S26 automatic movement",
+                    "Day/date display",
+                    "40-hour power reserve",
+                    "30m water resistance"
+                ]
+            },
+            watch5: {
+                name: "Valentino",
+                price: "₱25,900",
+                image: "rolex5.webp",
+                description: "This elegant Valentino watch features a rose gold IP stainless steel case with a beautiful mother-of-pearl dial, combining luxury with contemporary style.",
+                features: [
+                    "36mm rose gold IP stainless steel case",
+                    "Mineral crystal glass",
+                    "Japanese quartz movement",
+                    "Mother-of-pearl dial",
+                    "Stainless steel bracelet",
+                    "30m water resistance"
+                ]
+            },
+            watch6: {
+                name: "Valentino",
+                price: "₱22,500",
+                image: "rolex6.webp",
+                description: "A minimalist white dial watch from Valentino with clean lines and a sophisticated stainless steel bracelet, perfect for professional settings.",
+                features: [
+                    "34mm stainless steel case",
+                    "Mineral crystal glass",
+                    "Japanese quartz movement",
+                    "White sunray dial",
+                    "Stainless steel bracelet",
+                    "30m water resistance"
+                ]
+            },
+            watch7: {
+                name: "Casio G-Shock",
+                price: "₱9,950",
+                image: "rolex7.webp",
+                description: "The GA-2100 series combines G-Shock's legendary toughness with a sleek, octagonal design inspired by the original DW-5000C, now with analog-digital display.",
+                features: [
+                    "Carbon Core Guard structure",
+                    "200m water resistance",
+                    "Analog-digital display",
+                    "Super Illuminator LED light",
+                    "World time (48 cities)",
+                    "Stopwatch and countdown timer"
+                ]
+            },
+            watch8: {
+                name: "Casio G-Shock",
+                price: "₱14,500",
+                image: "rolex8.webp",
+                description: "This metal-covered G-Shock model offers enhanced durability with a premium look, featuring a black ion-plated bezel and band for a sophisticated appearance.",
+                features: [
+                    "Metal-covered shock-resistant design",
+                    "Black ion-plated bezel and band",
+                    "Analog-digital display",
+                    "200m water resistance",
+                    "Super Illuminator LED light",
+                    "1/100-second stopwatch"
+                ]
+            },
+            watch9: {
+                name: "Casio",
+                price: "₱3,950",
+                image: "rolex9.webp",
+                description: "An affordable and stylish dress watch from Casio with a slim profile and elegant gold-tone stainless steel bracelet, perfect for women's everyday wear.",
+                features: [
+                    "34mm gold-tone stainless steel case",
+                    "Mineral crystal glass",
+                    "Quartz movement",
+                    "Date display at 3 o'clock",
+                    "Bracelet clasp",
+                    "30m water resistance"
+                ]
+            },
+            watch10: {
+                name: "Casio Edifice",
+                price: "₱8,250",
+                image: "rolex14.webp",
+                description: "The Edifice line combines motorsports-inspired design with advanced functionality. This chronograph model features a sleek black dial with leather strap for a sophisticated look.",
+                features: [
+                    "44mm stainless steel case",
+                    "Mineral crystal glass",
+                    "Quartz chronograph movement",
+                    "Date display at 4:30",
+                    "Leather strap with buckle",
+                    "100m water resistance"
+                ]
+            },
+            watch11: {
+                name: "Seiko 5 ",
+                price: "₱18,500",
+                image: "rolex11.webp",
+                description: "This Seiko 5 Sports GMT offers automatic GMT functionality at an accessible price point, with a striking blue and black 'Batman' style bezel.",
+                features: [
+                    "42.5mm stainless steel case",
+                    "Hardlex crystal",
+                    "4R34 automatic GMT movement",
+                    "24-hour GMT hand",
+                    "41-hour power reserve",
+                    "100m water resistance"
+                ]
+            },
+            watch12: {
+                name: "Valentino",
+                price: "₱24,750",
+                image: "rolex12.webp",
+                description: "This Valentino women's watch features a stunning mother-of-pearl dial set in a polished stainless steel case, offering timeless elegance.",
+                features: [
+                    "34mm stainless steel case",
+                    "Mineral crystal glass",
+                    "Japanese quartz movement",
+                    "Mother-of-pearl dial",
+                    "Stainless steel bracelet",
+                    "30m water resistance"
+                ]
+            }
+        };
+    
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize product modal
+            const productModal = new bootstrap.Modal(document.getElementById('productModal'));
+            const modalProductName = document.getElementById('modalProductName');
+            const modalProductPrice = document.getElementById('modalProductPrice');
+            const modalProductImage = document.getElementById('modalProductImage');
+            const modalProductDescription = document.getElementById('modalProductDescription');
+            const modalProductFeatures = document.getElementById('modalProductFeatures');
+            const addToCartModalBtn = document.querySelector('.add-to-cart-modal');
+            
+            let currentProductId = '';
+            
+            // Set up click handlers for all product cards
+            document.querySelectorAll('.card[data-product-id]').forEach(card => {
+                card.addEventListener('click', function() {
+                    const productId = this.getAttribute('data-product-id');
+                    const product = products[productId];
+                    
+                    if (product) {
+                        currentProductId = productId;
+                        modalProductName.textContent = product.name;
+                        modalProductPrice.textContent = product.price;
+                        modalProductImage.src = product.image;
+                        modalProductImage.alt = product.name;
+                        modalProductDescription.textContent = product.description;
+                        
+                        // Clear existing features
+                        modalProductFeatures.innerHTML = '';
+                        
+                        // Add new features
+                        product.features.forEach(feature => {
+                            const li = document.createElement('li');
+                            li.textContent = feature;
+                            modalProductFeatures.appendChild(li);
+                        });
+                        
+                        // Update Add to Cart button in modal
+                        addToCartModalBtn.setAttribute('data-product-id', productId);
+                        addToCartModalBtn.setAttribute('data-product-name', product.name);
+                        addToCartModalBtn.setAttribute('data-product-price', product.price);
+                        addToCartModalBtn.setAttribute('data-product-image', product.image);
+                        
+                        productModal.show();
+                    }
+                });
+            });
+            
+            // Add to cart functionality
+            function addToCart(productId, productName, productPrice, productImage) {
+                let cart = JSON.parse(localStorage.getItem('cart')) || [];
+                const product = products[productId];
+                
+                const cartItem = {
+                    id: productId,
+                    name: productName,
+                    price: productPrice,
+                    image: productImage,
+                    description: product.description,
+                    quantity: 1
+                };
+                
+                const existingItemIndex = cart.findIndex(item => item.id === cartItem.id);
+        
+                if (existingItemIndex !== -1) {
+                    cart[existingItemIndex].quantity += 1;
+                } else {
+                    cart.push(cartItem);
+                }
+                
+                localStorage.setItem('cart', JSON.stringify(cart));
+                
+                const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
+                document.querySelector('.cart-count').textContent = cartCount;
+                
+                return cartCount;
+            }
+            
+            // Handle Add to Cart button in modal
+            addToCartModalBtn.addEventListener('click', function() {
+                const productId = this.getAttribute('data-product-id');
+                const productName = this.getAttribute('data-product-name');
+                const productPrice = this.getAttribute('data-product-price');
+                const productImage = this.getAttribute('data-product-image');
+                
+                const cartCount = addToCart(productId, productName, productPrice, productImage);
+                
+                // Visual feedback
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-check me-2"></i>Added to Cart!';
+                this.classList.add('btn-success');
+                this.classList.remove('btn-primary');
+                
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                    this.classList.remove('btn-success');
+                    this.classList.add('btn-primary');
+                }, 2000);
+            });
+            
+            // Initialize cart count
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            document.querySelector('.cart-count').textContent = cart.reduce((total, item) => total + item.quantity, 0);
+        });
+    </script>
+</body>
+</html>

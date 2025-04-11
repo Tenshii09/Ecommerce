@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Shopping Cart | Luxury Watches</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            padding-top: 56px;
+            background-color: #111;
+            color: #eee;
+        }
+        
+        /* Navbar Styles */
+        .navbar {
+            background-color: #222 !important;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #d10000 !important;
+        }
+        
+        .cart-count {
+            background-color: #d10000;
+            color: white;
+            border-radius: 50%;
+            padding: 1px 6px;
+            font-size: 0.7rem;
+            position: relative;
+            top: -8px;
+            left: -5px;
+        }
+        
+        /* Cart Specific Styles */
+        .cart-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        
+        .cart-item {
+            border-bottom: 1px solid #333;
+            padding: 1.5rem 0;
+        }
+        
+        .cart-item-img {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            background: #222;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #444;
+        }
+        
+        .quantity-selector {
+            width: 80px;
+            text-align: center;
+            background-color: #222;
+            border: 1px solid #444;
+            color: #eee;
+        }
+        
+        .summary-card {
+            background: #222;
+            border-radius: 8px;
+            padding: 1.5rem;
+            position: sticky;
+            top: 20px;
+            border: 1px solid #333;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        
+        .empty-cart {
+            text-align: center;
+            padding: 4rem 0;
+        }
+        
+        .empty-cart i {
+            font-size: 5rem;
+            color: #444;
+            margin-bottom: 1rem;
+        }
+        
+        .btn-primary {
+            background-color: #d10000;
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background-color: #b00000;
+        }
+        
+        .btn-outline-danger {
+            color: #d10000;
+            border-color: #d10000;
+        }
+        
+        .btn-outline-danger:hover {
+            background-color: #d10000;
+            color: white;
+        }
+        
+        .checkout-btn {
+            font-size: 1.1rem;
+            padding: 0.75rem;
+        }
+        
+        .product-description {
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Enhanced Product Name Styles */
+        .cart-item h5 {
+            font-family: 'Times New Roman', serif;
+            font-weight: 300;
+            font-size: 1.1rem;
+            color: #fff;
+            margin-bottom: 0.25rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .cart-item .brand-name {
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            color: #d10000 !important;
+            margin-bottom: 0.25rem;
+            font-weight: 500;
+        }
+
+        .cart-item .btn-outline-danger {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .model-reference {
+            font-size: 0.7rem;
+            color: #777;
+            font-family: monospace;
+            letter-spacing: 1px;
+        }
+        
+        /* Modal Styles */
+        .modal-content {
+            background-color: #111;
+            border: 1px solid #d10000;
+            color: #eee;
+        }
+        
+        .modal-header {
+            border-bottom: 1px solid #d10000;
+            background-color: #000;
+        }
+        
+        .modal-title {
+            color: #d10000;
+        }
+        
+        .btn-close {
+            filter: invert(1);
+        }
+        
+        .form-control, .form-select {
+            background-color: #222;
+            border: 1px solid #444;
+            color: #eee;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            background-color: #333;
+            border-color: #d10000;
+            color: #eee;
+            box-shadow: 0 0 0 0.25rem rgba(209, 0, 0, 0.25);
+        }
+        
+        /* Footer Styles */
+        footer {
+            background-color: #000 !important;
+            border-top: 1px solid #d10000;
+        }
+        
+        footer a {
+            color: #d10000 !important;
+        }
+        
+        footer a:hover {
+            color: #b00000 !important;
+        }
+        
+        @media (max-width: 768px) {
+            .cart-item-img {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .cart-item h5 {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-clock me-2"></i>Luxury Watches
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#our-collection">Shop</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link cart-btn" href="cart.html">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cart-count">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Cart Main Content -->
+    <div class="cart-container">
+        <div class="container">
+            <h1 class="mb-4">Your Shopping Cart</h1>
+            
+            <div class="row">
+                <div class="col-lg-8">
+                    <div id="cart-items-container">
+                        <!-- Cart items will be dynamically inserted here -->
+                        <div class="empty-cart">
+                            <i class="fas fa-shopping-cart"></i>
+                            <h3>Your cart is empty</h3>
+                            <p>Browse our collection to find your perfect timepiece</p>
+                            <a href="index.html" class="btn btn-primary">Continue Shopping</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <div class="summary-card">
+                        <h3 class="mb-4">Order Summary</h3>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal:</span>
+                            <span id="subtotal">$0.00</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Shipping:</span>
+                            <span id="shipping">$0.00</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Tax:</span>
+                            <span id="tax">$0.00</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-4">
+                            <strong>Total:</strong>
+                            <strong id="total">$0.00</strong>
+                        </div>
+                        <button id="checkout-btn" class="btn btn-primary w-100 checkout-btn" disabled>
+                            Proceed to Checkout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div class="modal fade" id="checkoutModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Complete Your Order</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="orderForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="firstName" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="firstName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="lastName" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="lastName" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="address" class="form-label">Address</label>
+                                <input type="text" class="form-control" id="address" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="country" class="form-label">Country</label>
+                                <select class="form-select" id="country" required>
+                                    <option value="">Choose...</option>
+                                    <option>United States</option>
+                                    <option>United Kingdom</option>
+                                    <option>Canada</option>
+                                    <option>Australia</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="state" class="form-label">State</label>
+                                <input type="text" class="form-control" id="state" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="zip" class="form-label">Zip</label>
+                                <input type="text" class="form-control" id="zip" required>
+                            </div>
+                            <div class="col-12 mt-4">
+                                <h5>Payment Information</h5>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" id="creditCard" checked>
+                                    <label class="form-check-label" for="creditCard">
+                                        Credit Card
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" id="paypal">
+                                    <label class="form-check-label" for="paypal">
+                                        PayPal
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" id="bankTransfer">
+                                    <label class="form-check-label" for="bankTransfer">
+                                        Bank Transfer
+                                    </label>
+                                </div>
+                            </div>
+                            <div id="creditCardFields" class="row g-3 mt-2">
+                                <div class="col-12">
+                                    <label for="cc-name" class="form-label">Name on card</label>
+                                    <input type="text" class="form-control" id="cc-name">
+                                </div>
+                                <div class="col-12">
+                                    <label for="cc-number" class="form-label">Credit card number</label>
+                                    <input type="text" class="form-control" id="cc-number">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="cc-expiration" class="form-label">Expiration</label>
+                                    <input type="text" class="form-control" id="cc-expiration">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="cc-cvv" class="form-label">CVV</label>
+                                    <input type="text" class="form-control" id="cc-cvv">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="placeOrderBtn" class="btn btn-primary">Place Order</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Confirmation Modal -->
+    <div class="modal fade" id="orderConfirmationModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Order Confirmation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <i class="fas fa-check-circle text-success fa-5x mb-4"></i>
+                    <h3>Thank You For Your Order!</h3>
+                    <p class="mb-4">Your order #<span id="orderNumber">12345</span> has been placed successfully.</p>
+                    <p>A confirmation email has been sent to <strong id="customerEmail">user@example.com</strong></p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Continue Shopping</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="py-4 bg-dark text-white">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5>Luxury Watches</h5>
+                    <p>Providing premium timepieces since 1995. Our curated collection represents the finest in horology.</p>
+                </div>
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="text-white">Home</a></li>
+                        <li><a href="index.html#our-collection" class="text-white">Shop</a></li>
+                        <li><a href="#" class="text-white">About Us</a></li>
+                        <li><a href="#" class="text-white">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Newsletter</h5>
+                    <form>
+                        <div class="mb-3">
+                            <input type="email" class="form-control" placeholder="Your email">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="text-center">
+                <p class="mb-0">&copy; 2023 Luxury Watches. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load cart from localStorage
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const cartCountElement = document.querySelector('.cart-count');
+            const cartItemsContainer = document.getElementById('cart-items-container');
+            const subtotalElement = document.getElementById('subtotal');
+            const shippingElement = document.getElementById('shipping');
+            const taxElement = document.getElementById('tax');
+            const totalElement = document.getElementById('total');
+            const checkoutBtn = document.getElementById('checkout-btn');
+            const checkoutModal = new bootstrap.Modal(document.getElementById('checkoutModal'));
+            const orderConfirmationModal = new bootstrap.Modal(document.getElementById('orderConfirmationModal'));
+            const placeOrderBtn = document.getElementById('placeOrderBtn');
+            const orderForm = document.getElementById('orderForm');
+
+            // Update cart count
+            function updateCartCount() {
+                const itemCount = cart.reduce((total, item) => total + (item.quantity || 1), 0);
+                cartCountElement.textContent = itemCount;
+                return itemCount;
+            }
+
+            function renderCart() {
+    if (cart.length === 0) {
+        cartItemsContainer.innerHTML = `
+            <div class="empty-cart">
+                <i class="fas fa-shopping-cart"></i>
+                <h3>Your cart is empty</h3>
+                <p>Browse our collection to find your perfect timepiece</p>
+                <a href="index.html" class="btn btn-primary">Continue Shopping</a>
+            </div>
+        `;
+        checkoutBtn.disabled = true;
+        updateTotals();
+        return;
+    }
+
+    let cartHTML = '';
+    cart.forEach((item, index) => {
+        const price = parseFloat(item.price.replace(/[^0-9.-]+/g,""));
+        const quantity = item.quantity || 1;
+        
+        // Use shortened descriptions based on product ID
+        let shortDescription = '';
+        if (item.id === 'watch1') shortDescription = 'Casio MDV-107D-1A1 Rolex SUBMARINER Date Budget-Friendly Alternative';
+        else if (item.id === 'watch2') shortDescription = 'Casio MDV-107D-3A Rolex STARBUCKS 44m Budget-Friendly Alternative';
+        else if (item.id === 'watch3') shortDescription = 'Seiko Presage SSA464J1 Japanese Zen Garden Open Heart Automatic Watch';
+        else if (item.id === 'watch4') shortDescription = 'SEIKO SNKL38K1 Automatic Gold Stainless Steel Watch for Men';
+        else if (item.id === 'watch5') shortDescription = 'Valentino 20121662-ROSE GOLD - MOP DIAL EXCALIBUR IP ROSE GOLD STAINLESS STEEL';
+        else if (item.id === 'watch6') shortDescription = 'Valentino 20122227-WHITE DIAL Stainless Steel Watch for Woman';
+        else if (item.id === 'watch7') shortDescription = 'Casio G-shock GA-2100-1A Digital Analog Rubber Strap Watch For Men';
+        else if (item.id === 'watch8') shortDescription = 'Casio G-shock GM-110BB-1A Digital Analog Rubber Strap Watch';
+        else if (item.id === 'watch9') shortDescription = 'Casio LTP-V009D-4E Analog Stainless Steel Strap Watch For Women';
+        else if (item.id === 'watch10') shortDescription = 'Casio Edifice EFR-526L-1A Chronograph Leather Strap Watch For Men';
+        else if (item.id === 'watch11') shortDescription = 'Seiko 5 SSK003K1 Sports Batman GMT Automatic Watch for Men';
+        else if (item.id === 'watch12') shortDescription = 'Valentino 20122227-MOP DIAL Stainless Steel Band Watch for Women';
+        else shortDescription = item.description || 'Premium luxury watch';
+        
+        cartHTML += `
+            <div class="cart-item" data-index="${index}">
+                <div class="row align-items-center">
+                    <div class="col-3 col-md-2">
+                        <img src="${item.image}" alt="${item.name}" class="cart-item-img">
+                    </div>
+                    <div class="col-5 col-md-6">
+                        <div class="d-flex flex-column">
+                            <span class="brand-name">${item.brand || 'Luxury Watches'}</span>
+                            <h5 class="mb-1">${item.name}</h5>
+                            ${item.model ? `<span class="model-reference">Ref: ${item.model}</span>` : ''}
+                            <p class="product-description mb-2">${shortDescription}</p>
+                            <button class="btn btn-sm btn-outline-danger remove-item align-self-start">Remove</button>
+                        </div>
+                    </div>
+                    <div class="col-4 col-md-4">
+                        <div class="d-flex align-items-center justify-content-end">
+                            <input type="number" min="1" value="${quantity}" class="form-control quantity-selector me-2" style="width: 60px;">
+                            <span class="fw-bold">${item.price}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    cartItemsContainer.innerHTML = cartHTML;
+    checkoutBtn.disabled = false;
+    updateTotals();
+    attachEventListeners();
+}
+
+            // Update order totals
+            function updateTotals() {
+                const subtotal = cart.reduce((total, item) => {
+                    const price = parseFloat(item.price.replace(/[^0-9.-]+/g,""));
+                    const quantity = item.quantity || 1;
+                    return total + (price * quantity);
+                }, 0);
+
+                const shipping = subtotal > 500 ? 0 : 25;
+                const tax = subtotal * 0.08; // 8% tax
+                const total = subtotal + shipping + tax;
+
+                subtotalElement.textContent = `$${subtotal.toFixed(2)}`;
+                shippingElement.textContent = shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`;
+                taxElement.textContent = `$${tax.toFixed(2)}`;
+                totalElement.textContent = `$${total.toFixed(2)}`;
+            }
+
+            // Attach event listeners to cart items
+            function attachEventListeners() {
+                document.querySelectorAll('.remove-item').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const index = this.closest('.cart-item').dataset.index;
+                        cart.splice(index, 1);
+                        localStorage.setItem('cart', JSON.stringify(cart));
+                        renderCart();
+                        updateCartCount();
+                    });
+                });
+
+                document.querySelectorAll('.quantity-selector').forEach(input => {
+                    input.addEventListener('change', function() {
+                        const index = this.closest('.cart-item').dataset.index;
+                        const newQuantity = parseInt(this.value);
+                        if (newQuantity > 0) {
+                            cart[index].quantity = newQuantity;
+                            localStorage.setItem('cart', JSON.stringify(cart));
+                            renderCart();
+                            updateCartCount();
+                        } else {
+                            this.value = cart[index].quantity || 1;
+                        }
+                    });
+                });
+            }
+
+            // Initialize checkout process
+            checkoutBtn.addEventListener('click', function() {
+                checkoutModal.show();
+            });
+
+            // Handle place order button
+            placeOrderBtn.addEventListener('click', function() {
+                if (!orderForm.checkValidity()) {
+                    orderForm.reportValidity();
+                    return;
+                }
+
+                const orderData = {
+                    customer: {
+                        firstName: document.getElementById('firstName').value,
+                        lastName: document.getElementById('lastName').value,
+                        email: document.getElementById('email').value,
+                        address: document.getElementById('address').value,
+                        country: document.getElementById('country').value,
+                        state: document.getElementById('state').value,
+                        zip: document.getElementById('zip').value
+                    },
+                    paymentMethod: document.querySelector('input[name="paymentMethod"]:checked').id,
+                    items: cart,
+                    subtotal: subtotalElement.textContent,
+                    shipping: shippingElement.textContent,
+                    tax: taxElement.textContent,
+                    total: totalElement.textContent,
+                    orderNumber: 'LW' + Math.floor(Math.random() * 1000000)
+                };
+
+                document.getElementById('orderNumber').textContent = orderData.orderNumber;
+                document.getElementById('customerEmail').textContent = orderData.customer.email;
+                
+                // Clear cart
+                cart = [];
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCartCount();
+                
+                checkoutModal.hide();
+                orderConfirmationModal.show();
+                orderForm.reset();
+            });
+
+            // Initial render
+            updateCartCount();
+            renderCart();
+        });
+    </script>
+</body>
+</html>
